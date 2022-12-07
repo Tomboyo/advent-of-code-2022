@@ -1,4 +1,4 @@
-(ns advent-2022.core.day1
+(ns advent-2022.day1
   (:require clojure.core
             clojure.java.io
             clojure.string))
