@@ -12,10 +12,21 @@
   :ref)
 
 ;; Return the intersection of two bitsets as a bitset.
-(defn intersection [a b] (bit-and a b))
+(defn intersection
+  ([a b] (bit-and a b)) 
+  ([a b & r]
+   (loop [a a
+          b b
+          r r]
+     (if (empty? r)
+       (bit-and a b)
+           (recur
+            (bit-and a b)
+            (first r)
+            (rest r))))))
 
 ;; Return the position of the first element of the bitset, starting with the least significant bits.
-(defn first [x]
+(defn firstbit [x]
   (loop [i x
          p 0]
     (if (= 0 i)

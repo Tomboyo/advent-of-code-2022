@@ -33,8 +33,25 @@
            ;=> [{1 2 3} {27 2 29}]
            (map (fn [[a b]] (bitset/intersection a b)))
            ;=> {2}
-           (map bitset/first)
+           (map bitset/firstbit)
            ;=> 2
+           )]
+    (transduce xform + 0 lines)))
+
+(defn part2 [lines]
+  (let
+   [xform (comp
+           ;=> "abcAbC"
+           (map #(map priority %))
+           ;=> (1 2 3 27 2 29)
+           (map bitset/bitset64)
+           ;=> {1 2 3 27 2 29}
+           (partition-all 3)
+           ;=> [{} {} {}]
+           (map (fn [[a b c]] (bitset/intersection a b c)))
+           ;=> {x}
+           (map bitset/firstbit)
+           ;=> x
            )]
     (transduce xform + 0 lines)))
 
@@ -47,5 +64,6 @@
 (comment
   (map priority "a")
   (solve part1)
+  (solve part2)
   :ref)
   
