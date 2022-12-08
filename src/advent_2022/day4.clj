@@ -5,6 +5,9 @@
 (defn subset [[a1 a2] [b1 b2]]
   (and (<= a1 b1) (<= b2 a2)))
 
+(defn intersect [[a1 a2] [b1 b2]]
+  (and (<= b1 a2) (>= b2 a1)))
+
 (defn part1 [lines]
   (let [xform (comp
                ;=>1-12,3-4
@@ -24,6 +27,23 @@
                )]
     (transduce xform + 0 lines)))
 
+(defn part2 [lines]
+  (let [xform (comp
+               ;=>1-12,3-4
+               (map #(str/split % #"\D"))
+               ;=> ["1" "12" "3" "4"]
+               (map (fn [list] (map #(Integer/parseInt %) list)))
+               ;=> [1 12 3 4]
+               (map #(partition-all 2 %))
+               ;=> [(1 2) (3 4)]
+               (map (fn [[a b]] (intersect a b)))
+               ;=> [bool]
+               (map (fn [x] (if x 1 0)))
+               ;=> 0 | 1
+               )]
+    (transduce xform + 0 lines)))
+
 (comment
   (solve part1 "day4.txt")
+  (solve part2 "day4.txt")
   :ref)
