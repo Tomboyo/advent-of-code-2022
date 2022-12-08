@@ -11,7 +11,10 @@
                            "ttgJtRGJQctTZtZT"
                            "CrZsJsPPZsGzwwsLwLmpwMDw"))))))
 
-;; (deftest part2test
-;;   (testing "Day 2 part 2"
-;;     (is (= 12 (day2/part2 '("A Y", "B X", "C Z"))))))
+(deftest part2test
+  (testing "Day 3 part 2"
+    (is (= 70 (day3/part2 '("vJrwpWtwJgWrhcsFMMfFFhFp"
+                            "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"
+                            "PmmdzqPrVvPwwTWBwg"
+                            "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn" "ttgJtRGJQctTZtZT" "CrZsJsPPZsGzwwsLwLmpwMDw"))))))
 
