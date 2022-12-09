@@ -14,3 +14,5 @@ pom.xml.asc
 .lsp/
 .clj-kondo/
 .calva/
+*.iml
+.idea/

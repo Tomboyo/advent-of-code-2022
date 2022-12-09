@@ -1,4 +1,4 @@
-(ns advent-2022.day4
+(ns advent-2022.day4-test
   (:require [clojure.test :refer [deftest is testing]]
             [advent-2022.day4 :as day4]))
 
