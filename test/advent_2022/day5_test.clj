@@ -33,6 +33,13 @@
             "move 15 from 4 to 7"
             {1 ["Q" "H"] 3 ["B"] 4 ["N" "D"] 7 [] 8 ["N" "S"] 9 ["M"]})))))
 
+(deftest parse-command-part-2-test
+  (testing "Day 5 Part 2 - Parsing commands part 2"
+    (is (= {7 ["A" "B" "C" "Z" "X"] 4 []}
+           (day5/parse-command-part-2
+             "move 15 from 4 to 7"
+             {4 ["A" "B" "C"] 7 ["Z" "X"]})))))
+
 (deftest top-crates-test
   (testing "Day 5 Pat 1 - Get the top crates"
     (is (= "aB"

@@ -17,6 +17,12 @@
         to-list (concat (reverse head) (get crates to []))]
     (assoc crates to to-list from tail)))
 
+(defn parse-command-part-2 [line crates]
+  (let [[count from to] (map #(Integer/parseInt %) (re-seq #"\d+" line))
+        [head tail] (split-at count (get crates from []))
+        to-list (concat head (get crates to []))]
+    (assoc crates to to-list from tail)))
+
 (defn parse-command-f [line]
   (let [[count from to] (map #(Integer/parseInt %) (re-seq #"\d+" line))]
     (fn [crates]
@@ -30,8 +36,8 @@
               v)))
 
 ;; Solve part 1 using a stateful iteration strategy wherein we keep track of which section we're currently in.
-(defn part1
-  ([lines]
+(defn simulate
+  ([parse-command lines]
    (loop [state "crates"
           lines lines
           crates {}]
@@ -84,8 +90,12 @@
      crates (reduce (fn [acc f] (f acc)) crates commands)]
     (top-crates crates 9)))
 
+(defn part1 [lines] (simulate parse-command lines))
+(defn part2 [lines] (simulate parse-command-part-2 lines))
+
 (comment
   (() (a b c) [])
   (solve part1 "day5.txt")
   (solve part1-2 "day5.txt")
+  (solve part2 "day5.txt")
   :ref)
