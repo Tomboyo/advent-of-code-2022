@@ -17,18 +17,10 @@
         to-list (concat (reverse head) (get crates to []))]
     (assoc crates to to-list from tail)))
 
-(comment
-  (re-seq #"\d+" "move 15 from 26 to 39")
-  :ref)
-
 (defn top-crates [crates cols]
   (str/join (for [i (range cols)
                v (first (get crates (+ i 1) ""))]
            v)))
-
-(comment
-  (re-seq #"\d" "move 5 from 4 to 3"))
-  
 
 (defn part1
   ([lines]
