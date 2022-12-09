@@ -41,5 +41,5 @@
 (deftest part-1-test
   (testing "Day 5 Pat 1 - This sucked!"
     (is (= "QWBNFFVNM"
-           (day5/part1
+           (day5/part1-2
             (take 11 crates-input))))))
