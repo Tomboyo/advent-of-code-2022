@@ -43,16 +43,7 @@
          "commands"
          (if (nil? line)
            (top-crates crates 9)
-           (let [before-size (reduce + (for [[k v] crates] (count v)))
-                 after (parse-command line crates)
-                 after-size (reduce + (for [[k v] after] (count v)))]
-             (if (not= before-size after-size)
-               ;; I'm leaving this here for historical reference. I couldn't figure out how to get debugging to work, but you know what? Some carefully-plased assertions really does the trick.
-               (do (println "before: " crates)
-                   (println "cmd:    " line)
-                   (println "after:  " after)
-                   {})
-               (recur "commands" (rest lines) (parse-command line crates))))))))))
+           (recur "commands" (rest lines) (parse-command line crates))))))))
 
 (comment
   (solve part1 "day5.txt")
