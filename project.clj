@@ -2,7 +2,8 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME" 
   :dependencies [
-                 [org.clojure/clojure "1.11.1"]]
+                 [org.clojure/clojure "1.11.1"]
+                 [org.clojure/tools.trace "0.7.11"]]
   :main ^:skip-aot advent-2022.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
