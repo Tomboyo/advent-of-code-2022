@@ -84,3 +84,11 @@
   (reduce + (if (< size 100000) size 0) (map sum-tree children)))
 
 (println "PART 1:" (sum-tree tree))
+
+;; PART 2:
+;; Now we do basically the same thing. Take the smaller of a directory's size (or a sufficiently large number if it is
+;; not above the threshold) and the smallest such size of all children.
+(defn smallest-large-file [[size & children]]
+  (reduce min (if (> size 8381165) size 70000000) (map smallest-large-file children)))
+
+(println "PART 2:" (smallest-large-file tree))
