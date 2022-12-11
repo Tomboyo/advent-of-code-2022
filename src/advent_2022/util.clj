@@ -5,3 +5,7 @@
   (let [url (jio/resource resource)]
     (with-open [r (jio/reader url)]
       (solver (line-seq r)))))
+
+(defn read-lines [resource]
+  (with-open [r (jio/reader (jio/resource resource))]
+    (doall (line-seq r))))
