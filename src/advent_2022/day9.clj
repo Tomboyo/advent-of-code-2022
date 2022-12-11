@@ -13,25 +13,10 @@
     "L" (fn [[x y]] [(- x 1) y])
     "R" (fn [[x y]] [(+ x 1) y])))
 
-;; True if the two points are within are touching.
+;; True if the two points are touching.
 (defn touching? [[x y] [x2 y2]]
   (and (<= (- x 1) x2 (+ x 1))
        (<= (- y 1) y2 (+ y 1))))
-
-
-;; Maximize the absolute value of the given x, preserving its sign.
-;; -1/2 => -1
-;;  1/2 => 1
-(comment
-  ;; . H' .      . H .
-  ;; . H  .  =>  . T .
-  ;; T .  .      . . .
-  (follow [0 2] [0 1] [-1 0])
-  ;; .  . .      . . .
-  ;; H' H T  =>  H T .
-  ;; .  . .      . . .
-  (follow [-1 0] [0 0] [1 0])
-  :ref)
 
 ;; Round x away from 0 such that abs(x) is maximized.
 ;; (ceil-abs(1/2)) => 1,
