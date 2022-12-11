@@ -2,7 +2,8 @@
   (:require [advent-2022.util
              :refer
              [read-lines]]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.tools.trace :refer [trace]]))
 
 ;; Return a function which translates a point in the indicated cardinal
 ;; direction.
@@ -18,16 +19,10 @@
   (and (<= (- x 1) x2 (+ x 1))
        (<= (- y 1) y2 (+ y 1))))
 
-;; Given the current and prior position of H (h' and h respectively) and the
-;; current position of T (t), return the new position of T.
-;;
-;; Essentially, if T is no longer touching H, T occupies the former position of
-;; H. THis means T moves diagonally when it's supposed to and cardinally
-;; otherwise.
-(defn follow [h' h t]
-  (if (touching? h' t)
-    t
-    h))
+
+;; Maximize the absolute value of the given x, preserving its sign.
+;; -1/2 => -1
+;;  1/2 => 1
 (comment
   ;; . H' .      . H .
   ;; . H  .  =>  . T .
@@ -38,6 +33,27 @@
   ;; .  . .      . . .
   (follow [-1 0] [0 0] [1 0])
   :ref)
+
+;; Round x away from 0 such that abs(x) is maximized.
+;; (ceil-abs(1/2)) => 1,
+;; (ceil-abs(-1/2) => -1.
+(defn ceil-abs [x]
+  (if (< 0 x)
+    (int (Math/ceil x))
+    (int (Math/floor x))))
+
+;; Given the current position h of H and t of T, return the updated position of
+;; T so that it "follows" H, moving diagonally whenever H and T are not aligned
+;; on both axes.
+;;
+;; If we take e.g. x(h) - x(t) over 2, then round that "away" from t towards the
+;; greatest magnitude, it causes T to travel diagonally whenever H and T are not
+;; aligned, as desired. MATHS BBY
+(defn follow [[xh yh :as h] [xt yt :as t]]
+  (if (touching? h t)
+    t
+    [(+ xt (ceil-abs (/ (- xh xt) 2)))
+     (+ yt (ceil-abs (/ (- yh yt) 2)))]))
 
 ;; PART 1
 ;; Given H and T starting on the same arbitrary point, count the number of
@@ -60,8 +76,11 @@
         (count acc)
         ;; Otherwise, move H and T and acc the new position of T
         (let [h' (move h)
-              t (follow h' h t)]
+              t (follow h' t)]
           [(conj acc t) h' t])))
     ;; Initially, H and T start on the same arbitrary point.
     [#{[0 0]} [0 0] [0 0]]
     (read-lines "day9.txt")))
+
+;; PART 2
+;; Like part 1, but now there 9 instances of T that follow along in a chain.
