@@ -6,6 +6,7 @@
     (with-open [r (jio/reader url)]
       (solver (line-seq r)))))
 
-(defn read-lines [resource]
+(defn read-lines-eager [resource]
+  "Reads lines eagerly (not lazy)"
   (with-open [r (jio/reader (jio/resource resource))]
     (doall (line-seq r))))

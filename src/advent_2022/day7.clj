@@ -1,6 +1,6 @@
 (ns advent-2022.day7
   (:require
-    [advent-2022.util :refer [read-lines]]
+    [advent-2022.util :refer [read-lines-eager]]
     [clojure.tools.trace :refer [trace]]))
 
 ;; A "sized-dir" is a list representation of a directory which contains any
@@ -17,7 +17,7 @@
   ; (14 [7] [2])
   :ref)
 
-(def input (read-lines "day7.txt"))
+(def input (read-lines-eager "day7.txt"))
 
 ;; Convert a stream of input strings into a sized-dir tree.
 ;;

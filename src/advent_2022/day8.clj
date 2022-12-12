@@ -1,6 +1,6 @@
 (ns advent-2022.day8
   (:require
-    [advent-2022.util :refer [read-lines]]
+    [advent-2022.util :refer [read-lines-eager]]
     [clojure.set :as set]
     [clojure.string :as str]))
 
@@ -60,7 +60,7 @@
                     (map #(map (fn [x] (Integer/parseInt x)) %))
                     (map vec))
               conj
-              (read-lines "day8.txt"))))
+              (read-lines-eager "day8.txt"))))
 (println (part1 G))
 
 
