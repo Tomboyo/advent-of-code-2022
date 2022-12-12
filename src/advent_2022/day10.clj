@@ -75,7 +75,7 @@
              (map #(apply str (cons "\n" %))))
            ; Concat each line of CRT drawing
            str
-           ; Generate the first 180 cycles of state for this program.
+           ; Run the entire program.
            ; See also day10.test.txt
            (->> "day10.txt"
                 read-lines-eager
