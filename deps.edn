@@ -1,15 +1,15 @@
 {
  :paths ["src", "resources"]
- :deps {vvvvalvalval/scope-capture {:mvn/version "0.3.3"}}
+ :deps {
+        vvvvalvalval/scope-capture {:mvn/version "0.3.3"}
+        org.clojure/tools.trace {:mvn/version "0.7.11"}}
  :aliases
  
  
  {:cljfmt {:extra-deps {dev.weavejester/cljfmt {:mvn/version "0.12.0"}}
                  :main-opts ["-m" "cljfmt.main"]}
   :cider-clj {:extra-deps {org.clojure/clojure {:mvn/version "1.10.3"}
-                           cider/cider-nrepl {:mvn/version "0.50.0"}
-                           org.clojure/tools.trace {:mvn/version "0.7.11"}
-                           vvvvalvalval/scope-capture{:mvn/version "0.3.3"}}
+                           cider/cider-nrepl {:mvn/version "0.50.0"}}
               :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
 
   :cider-cljs {:extra-deps {org.clojure/clojure {:mvn/version "1.10.3"}
