@@ -24,61 +24,90 @@
 (comment
   (expand {:x 1 :y 5} {:x 1 :y 3}))
 
+(defn dimensions [world]
+  (let [ys (keys world)
+        xs (apply clojure.set/union (vals world))]
+  {
+   :min-x (reduce min xs)
+   :max-x (reduce max xs)
+   :min-y (reduce min ys)
+   :max-y (reduce max ys)
+  }))
+
 (defn draw [world]
-  (let [max-y (reduce max (keys world))
-        min-y 0 
-        vals (apply clojure.set/union (vals world))
-        max-x (reduce max vals)
-        min-x (reduce min vals)]
-    ; do is not redundant; silences a bunch of nil's in the REPL.
-    (do (doall (for [y (range min-y (+ 1 max-y))]
-                 (do
-                   (doall
-                     (for [x (range min-x (+ 1 max-x))]
-                       (if (and  (= 500 x) (= 0 y))
-                         (print "+")
-                         (print (if (contains? (get world y) x) "#" ".")))
-                       )) 
-                   (println ""))))
-        nil)))
+  (let [d (dimensions world)
+        max-x (:max-x d)
+        max-y (:max-y d)
+        min-x (:min-x d)
+        min-y (:min-y d)]
+    (doall (for [y (range min-y (+ 1 max-y))]
+             (do
+               (doall
+                 (for [x (range min-x (+ 1 max-x))]
+                   (if (and  (= 500 x) (= 0 y))
+                     (print "+")
+                     (print (if (contains? (get world y) x) "#" ".")))
+                   )) 
+               (println ""))))
+    nil))
 
-(defn trace [k it]
-  (println "TRACE" k it)
-  it)
+(defn world-empty?
+  "True if the world does not have a wall or sand at p"
+  [world x y]
+  (let [row (get world y)]
+    (or (nil? row)
+        (not (contains? row x)))))
 
-(with-open [reader (io/reader  (io/resource "day14.txt"))]
-  (as-> (line-seq reader) it
-    (map (fn [y] (str/split y #" -> ")) it)
-    (map (fn [path]
-           (->> path
-                (map (fn [s] (str/split s #",")))
-                (map (fn [[a b]] {
-                                  :x (Integer/parseInt a)
-                                  :y (Integer/parseInt b)
-                                  }))))
-         it)
-    (mapcat (partial partition 2 1) it)
-    (mapcat (fn [[a b]] (expand a b)) it)
-    (reduce (fn [acc p]
-              (update acc
-                      (:y p)
-                      (fn [old] (conj (or old (sorted-set)) (:x p)))))
-            {}
-            it)
-    ; We now have a { y => #{ x1 x2 x3 ...}} of occupied spaces
-    (do (draw it)
-        (let [max-y (reduce max (keys it))
-              vals (apply clojure.set/union (vals it))
-              max-x (reduce max vals)
-              min-x (reduce min vals)]
-          (println min-x max-x max-y)
-          (loop [x 500 y 0 counter 0 world it]
-            (cond
-              (or (< 1000 counter) (< x min-x) (> x max-x) (> y max-y)) counter
-              (not (contains? (get world (+ 1 y)) x)) (recur x (+ 1 y) counter world)
-              (not (contains? (get world (+ 1 y)) (- x 1))) (recur (- x 1) (+ 1 y) counter world)
-              (not (contains? (get world (+ 1 y)) (+ 1 x))) (recur (+ 1 x) (+ 1 y) counter world)
-              :else (recur 500 0 (+ 1 counter) (update world y (fn [xs] (into #{} (conj xs x)))))))                
-          ))))
+(world-empty? {13 #{497 498 499 500 501 502}} 503 13)
 
+(defn solver [update-world]
+  (with-open [reader (io/reader  (io/resource "day14.txt"))]
+    (as-> (line-seq reader) it
+      (map (fn [y] (str/split y #" -> ")) it)
+      (map (fn [path]
+             (->> path
+                  (map (fn [s] (str/split s #",")))
+                  (map (fn [[a b]] {
+                                    :x (Integer/parseInt a)
+                                    :y (Integer/parseInt b)
+                                    }))))
+           it)
+      (mapcat (partial partition 2 1) it)
+      (mapcat (fn [[a b]] (expand a b)) it)
+      (reduce (fn [acc p]
+                (update acc
+                        (:y p)
+                        (fn [old] (conj (or old (sorted-set)) (:x p)))))
+              {}
+              it)
+      ; We now have a { y => #{ x1 x2 x3 ...}} of occupied spaces
+      (do (comment (draw it))
+          (let [w (update-world it)
+                d (dimensions w)
+                max-y (:max-y d) 
+                max-x (:max-x d) 
+                min-x (:min-x d)]
+            (println min-x max-x max-y)
+            (loop [x 500 y 0 counter 0 world (update-world w)]
+              (cond
+                (or (> y max-y)
+                    (or (< x min-x) (> x max-x))) counter
+                (world-empty? world x (+ 1 y)) (recur x (+ 1 y) counter world)
+                (world-empty? world (- x 1) (+ 1 y)) (recur (- x 1) (+ 1 y) counter world)
+                (world-empty? world (+ x 1) (+ 1 y)) (recur (+ 1 x) (+ 1 y) counter world)
+                ; Is the sand piled up to the origin?
+                (and (= 500 x) (= 0 y)) (+ 1 counter)
+                :else (recur 500 0 (+ 1 counter) (update world y (fn [xs] (into #{} (conj xs x)))))))                
+            )))))
 
+;; Part 1 -- 979
+(solver identity)
+
+;; In part two, there is an infinitely-wide horizontal wall at y = 2 + the
+;; greatest y-coordinate. We know based on our println that y=174 is the largest
+;; y coordinate, so we'll stick a very wide path in there. The slope of the sand
+;; is +/-1, so if the tip of the sand is y=178, the base would extend 178 units
+;; in each direction from the origin at x=500. So, the line just needs to be from
+;; x=323 to x=679.
+;; Part 2 -- 29,044
+(solver (fn [world] (assoc world 176 (into (sorted-set) (range 323 679)))))
