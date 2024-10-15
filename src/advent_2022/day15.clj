@@ -58,37 +58,40 @@
   "Given the line at y and a seq of sensor readings, return a set of intervals
   describing where the line intersects with sensor radii."
   [y readings]
-  (->> readings
-       ; Decorate each reading with its radius
-       (map (fn [[sx sy bx by]] [sx sy bx by (taxicab-distance sx sy bx by)]))
-       ; Only consider sensors whose circumference intersects y
-       (filter (fn [[_ sy _ _ r]] (<= (abs (- sy y)) r)))
-       ; Convert readings to maps containing the coordinates of the beacon and
-       ; the x-axis interval of the intersection between the sensor radius and
-       ; the line at y.
-       (map (fn [[sx sy bx by r]]
-              (let [dy (abs (- sy y))
-                    dx (abs (- r dy))]
-                {:beacon [bx by]
-                 :interval [(- sx dx) (+ sx dx)]})))
-       ; Reduce the data down to a collection of disjoint x-axis intervals and
-       ; the distinct beacons associated with the intersecting sensors.
-       (reduce
-        (fn [{intervals :intervals
-              beacons :beacons}
-             {beacon :beacon
-              interval :interval}]
-          (let [grouped (group-by (partial disjoint-intervals? interval) intervals)
-                intersecting (get grouped false)
-                ; The interval that covers all intersecting intervals
-                cover (if (< 0 (count intersecting))
-                        (reduce (fn [[a b] [c d]] [(min a c) (max b d)])
-                                interval
-                                intersecting)
-                        interval)]
-            {:intervals (conj (get grouped true) cover)
-             :beacons (conj beacons beacon)}))
-        {:intervals {} :beacons {}})))
+  (let [xform (comp
+              ; Decorate each reading with its radius
+               (map (fn [[sx sy bx by]] [sx sy bx by (taxicab-distance sx sy bx by)]))
+              ; Only consider sensors whose circumference intersects y
+               (filter (fn [[_ sy _ _ r]] (<= (abs (- sy y)) r)))
+              ; Convert readings to maps containing the coordinates of the beacon and
+              ; the x-axis interval of the intersection between the sensor radius and
+              ; the line at y.
+               (map (fn [[sx sy bx by r]]
+                      (let [dy (abs (- sy y))
+                            dx (abs (- r dy))]
+                        {:beacon [bx by]
+                         :interval [(- sx dx) (+ sx dx)]}))))]
+    (transduce
+     xform
+     ; Reduce the data down to a collection of disjoint x-axis intervals and
+     ; the distinct beacons associated with the intersecting sensors.
+     (completing
+      (fn [{intervals :intervals
+            beacons :beacons}
+           {beacon :beacon
+            interval :interval}]
+        (let [grouped (group-by (partial disjoint-intervals? interval) intervals)
+              intersecting (get grouped false)
+            ; The interval that covers all intersecting intervals
+              cover (if (< 0 (count intersecting))
+                      (reduce (fn [[a b] [c d]] [(min a c) (max b d)])
+                              interval
+                              intersecting)
+                      interval)]
+          {:intervals (conj (get grouped true) cover)
+           :beacons (conj beacons beacon)})))
+     {:intervals {} :beacons {}}
+     readings)))
 
 
 (defn part1
