@@ -1,8 +1,9 @@
 {
- :paths ["src", "resources"]
+ :paths ["src", "resources", "test"]
  :deps {
         vvvvalvalval/scope-capture {:mvn/version "0.3.3"}
-        org.clojure/tools.trace {:mvn/version "0.7.11"}}
+        org.clojure/tools.trace {:mvn/version "0.7.11"}
+        com.clojure-goes-fast/clj-async-profiler {:mvn/version "1.2.0"}}
  :aliases
  
  
