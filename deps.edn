@@ -3,7 +3,8 @@
  :deps {
         vvvvalvalval/scope-capture {:mvn/version "0.3.3"}
         org.clojure/tools.trace {:mvn/version "0.7.11"}
-        com.clojure-goes-fast/clj-async-profiler {:mvn/version "1.2.0"}}
+        com.clojure-goes-fast/clj-async-profiler {:mvn/version "1.2.0"}
+        criterium/criterium {:mvn/version "0.4.6"}}
  :aliases
  
  
